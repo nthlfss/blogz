@@ -29,15 +29,31 @@ def index():
 @app.route('/newpost', methods=['GET', 'POST'])
 def newpost():
 
+    # initialize error variables
+    titleError = ""
+    bodyError = ""
+
     if request.method == 'POST':
+        # save user input into variables
         post_title = request.form['title']
         post_body = request.form['body']
-        new_post = Blog(title=post_title, body=post_body)
-        db.session.add(new_post)
-        db.session.commit()
-        return redirect(url_for('index'))
+        # verify if fields are empty
+        if len(post_title) == 0:
+            titleError = "Field cannot be empty"
+        if len(post_body) == 0:
+            bodyError = "Field cannot be empty"
+        # if no errors, add input to db
+        if not titleError and not bodyError:
+            new_post = Blog(title=post_title, body=post_body)
+            db.session.add(new_post)
+            db.session.commit()
+            return redirect(url_for('index'))
+        # else reload same page with error messages
+        else:
+            return render_template('newpost.html', pagetitle="Add A New Blog Entry", titleError=titleError, bodyError=bodyError, body=post_body, title=post_title)
+
     
-    entries = Blog.query.order_by(Blog.id.desc())
+
     return render_template('newpost.html', pagetitle="Add A New Blog Entry")
 
 
