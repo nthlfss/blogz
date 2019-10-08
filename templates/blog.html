@@ -1,29 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <a href="">Main Blog Page</a> <a href="">Add a Blog Entry</a>
-    <br>
     <h1>Build A Blog</h1>
-
-    <br>
-    <h3>New Post:</h3>
-    
-    <form method='post' id='blogform'>
-        <label>
-            Title:
-            <br>
-            <input type="text" name='title' />
-            <br>
-            <br>
-            <textarea rows="4" cols="75" name='body' form="blogform"></textarea>
-        </label>
-        <br>
-        <input type="submit" value='Submit' />
-    </form>
+    <button><a href="{{ url_for('newpost') }}">New Blog Entry</a></button>
 
         {% for entry in entries %}
         <h3>{{entry.title}}</h3>
-        <span>{{entry.body}}</span>
+        <span class="blogpost">{{entry.body}}</span>
+        <hr />
         {% endfor %}
 
 {% endblock %}

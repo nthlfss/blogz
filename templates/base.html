@@ -4,7 +4,10 @@
         <title>{{pagetitle}}</title>
     </head>
 <body>
-
+    <nav>
+        <a href="{{ url_for('index') }}">Home</a> |
+        <a href="{{ url_for('newpost') }}">New Post</a>
+    </nav>
     {% block content %}
     {% endblock %}
 
