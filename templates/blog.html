@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Build A Blog</h1>
-
         {% for entry in entries %}
         <a href="{{ url_for('post', id=entry.id) }}"><h3>{{entry.title}}</h3></a>
         <span>{{entry.body}}</span>

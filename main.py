@@ -51,7 +51,8 @@ def newpost():
         # else reload same page with error messages
         else:
             return render_template('newpost.html', pagetitle="Add A New Blog Entry", titleError=titleError, bodyError=bodyError, body=post_body, title=post_title)
-
+    return render_template('newpost.html', pagetitle="Add A New Blog Entry")
+    
 @app.route('/post/<int:id>')
 def post(id):
     entry = Blog.query.get(id)
