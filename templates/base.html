@@ -5,8 +5,8 @@
     </head>
 <body>
     <nav>
-        <a href="{{ url_for('index') }}">Home</a> |
-        <a href="{{ url_for('newpost') }}">New Post</a>
+        <button><a href="{{ url_for('index') }}">Home</a></button> |
+        <button><a href="{{ url_for('newpost') }}">New Post</a></button>
     </nav>
     {% block content %}
     {% endblock %}

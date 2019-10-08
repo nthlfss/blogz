@@ -2,11 +2,10 @@
 
 {% block content %}
     <h1>Build A Blog</h1>
-    <button><a href="{{ url_for('newpost') }}">New Blog Entry</a></button>
 
         {% for entry in entries %}
-        <h3>{{entry.title}}</h3>
-        <span class="blogpost">{{entry.body}}</span>
+        <a href="{{ url_for('post', id=entry.id) }}"><h3>{{entry.title}}</h3></a>
+        <span>{{entry.body}}</span>
         <hr />
         {% endfor %}
 
