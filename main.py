@@ -38,6 +38,18 @@ def index():
     entries = Blog.query.order_by(Blog.id.desc())
     return render_template('blog.html', pagetitle="Build A Blog!", entries=entries)
 
+@app.route('/signup')
+def signup():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        verify = request.form['verify']
+        new_user = User(username=username, password=password)
+        db.session.add(new_user)
+        db.session.commit()
+        return render_template('index.html')
+    return render_template('signup.html', pagetitle="Sign Up")
+
 @app.route('/newpost', methods=['GET', 'POST'])
 def newpost():
 
