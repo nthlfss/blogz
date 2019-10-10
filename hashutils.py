@@ -6,4 +6,5 @@ def make_pw_hash(password):
 def check_pw_hash(password, hash):
     if make_pw_hash(password) == hash:
         return True
+
     return False
