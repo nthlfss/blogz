@@ -50,6 +50,14 @@ def signup():
         return render_template('index.html')
     return render_template('signup.html', pagetitle="Sign Up")
 
+@app.route('/login')
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        new_user = User(username=username, password=password)
+    return render_template('login.html', pagetitle="Log In")
+
 @app.route('/newpost', methods=['GET', 'POST'])
 def newpost():
 
