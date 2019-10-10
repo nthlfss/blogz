@@ -89,7 +89,8 @@ def logout():
 @app.route('/')
 @app.route('/blog')
 def index():
-    entries = Blog.query.order_by(Blog.id.desc())
+    user = User.query.filter_by(username=session['username']).first()
+    entries = Blog.query.filter_by(owner=user).all()
     return render_template('blog.html', pagetitle="Build A Blog!", entries=entries)
 
 
@@ -104,7 +105,7 @@ def newpost():
         # save user input into variables
         post_title = request.form['title']
         post_body = request.form['body']
-        user = User.query.filter_by(id=1).first()
+        user = User.query.filter_by(username=session['username']).first()
         # verify if fields are empty
         if len(post_title) == 0:
             titleError = "Field cannot be empty"
