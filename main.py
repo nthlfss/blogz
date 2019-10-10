@@ -1,5 +1,5 @@
   
-from flask import Flask, request, redirect, render_template, url_for, session
+from flask import Flask, request, redirect, render_template, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 import os
 from datetime import datetime
@@ -50,9 +50,11 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and user.password == password:
             session['username'] = username
+            flash('Logged in')
             return redirect('/')
         else:
-            return '<h1>Error!</h1>'
+            flash('User password incorrect, or user does not exist', 'error')
+
     return render_template('login.html', pagetitle="Log In")
 
 @app.route('/signup', methods=['POST', 'GET'])
