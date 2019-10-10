@@ -1,19 +1,23 @@
   
-from flask import Flask, request, redirect, render_template, url_for
+from flask import Flask, request, redirect, render_template, url_for, session
 from flask_sqlalchemy import SQLAlchemy
+import os
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://blogz:lcblog@localhost:8889/blogz'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
+app.secret_key = os.urandom(24)
 
 
 class Blog(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(120))
+    title = db.Column(db.String(120), nullable=False)
     body = db.Column(db.String(500))
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __init__(self, title, body, owner):
@@ -23,7 +27,7 @@ class Blog(db.Model):
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20))
+    username = db.Column(db.String(20), unique=True, nullable=False)
     password = db.Column(db.String(30))
     blogs = db.relationship('Blog', backref='owner')
 
@@ -32,31 +36,59 @@ class User(db.Model):
         self.password = password
 
 
+@app.before_request
+def require_login():
+    allowed_routes = ['login', 'signup']
+    if request.endpoint not in allowed_routes and 'username' not in session:
+        return redirect('/login')
+
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = User.query.filter_by(username=username).first()
+        if user and user.password == password:
+            session['username'] = username
+            return redirect('/')
+        else:
+            return '<h1>Error!</h1>'
+    return render_template('login.html', pagetitle="Log In")
+
+@app.route('/signup', methods=['POST', 'GET'])
+def signup():
+
+    # initialize error variables
+    usernameError = ""
+    passwordError = ""
+
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        verify = request.form['verify']
+
+        # check if user already exists
+        existing_user = User.query.filter_by(username=username).first()
+        if not existing_user:
+            new_user = User(username, password)
+            db.session.add(new_user)
+            db.session.commit()
+            return redirect('/login')
+        else:
+            return "<h1> duplicate user</h1>"
+    return render_template('signup.html', pagetitle="Sign Up")
+
+@app.route('/logout')
+def logout():
+    del session['username']
+    return redirect('/')
+
 @app.route('/')
 @app.route('/blog')
 def index():
     entries = Blog.query.order_by(Blog.id.desc())
     return render_template('blog.html', pagetitle="Build A Blog!", entries=entries)
 
-@app.route('/signup')
-def signup():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        verify = request.form['verify']
-        new_user = User(username=username, password=password)
-        db.session.add(new_user)
-        db.session.commit()
-        return render_template('index.html')
-    return render_template('signup.html', pagetitle="Sign Up")
-
-@app.route('/login')
-def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        new_user = User(username=username, password=password)
-    return render_template('login.html', pagetitle="Log In")
 
 @app.route('/newpost', methods=['GET', 'POST'])
 def newpost():
