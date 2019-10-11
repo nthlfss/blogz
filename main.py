@@ -36,9 +36,10 @@ class User(db.Model):
         self.username = username
         self.pwhash = make_pw_hash(password)
 
-
+# def to require login
 @app.before_request
 def require_login():
+    # routes allowed to be viewed without login
     allowed_routes = ['login', 'signup']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
@@ -56,15 +57,10 @@ def login():
         else:
             flash('User password incorrect, or user does not exist', 'error')
 
-    return render_template('login.html', pagetitle="Log In")
+    return render_template('login.html', pagetitle="Log In", pageLabel="LOG IN")
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
-
-    # initialize error variables
-    usernameError = ""
-    passwordError = ""
-
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -76,10 +72,11 @@ def signup():
             new_user = User(username, password)
             db.session.add(new_user)
             db.session.commit()
+            flash('New user registered')
             return redirect('/login')
         else:
-            return "<h1> duplicate user</h1>"
-    return render_template('signup.html', pagetitle="Sign Up")
+            flash('User password incorrect, or user does not exist', 'error')
+    return render_template('signup.html', pagetitle="Sign Up", pageLabel="SIGN UP")
 
 @app.route('/logout')
 def logout():
@@ -91,7 +88,7 @@ def logout():
 def index():
     user = User.query.filter_by(username=session['username']).first()
     entries = Blog.query.filter_by(owner=user).all()
-    return render_template('blog.html', pagetitle="Build A Blog!", entries=entries)
+    return render_template('blog.html', pagetitle="Blogz", entries=entries, user=user, pageLabel="RECENT POSTS")
 
 
 @app.route('/newpost', methods=['GET', 'POST'])

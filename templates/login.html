@@ -1,20 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-    <h2>Log In:</h2>
-    
     <form method='post'>
         <label>
-            Username:
+            <h5>Username</h5>
             <input type="text" name="username" />
             <br>
-            Password:
+            <h5>Password:</h5>
             <input type="password" name="password" />
             <br>
-
-            <span>{{ loginError }}</span>
-
         </label>
         <br>
         <input type="submit" value='Submit' />

@@ -1,22 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-    <h2>Sign Up:</h2>
-    
-    <form method='post'>
-        <label>
-            Username:
-            <input type="text" name="username" />
-            <br>
-            Password:
-            <input type="password" name="password" />
-            <br>
-            Verify:
-            <input type="password" name="verify" />
-        </label>
+<form method='post'>
+    <label>
+        <h5>Username:</h5>
+        <input type="text" name="username" />
         <br>
-        <input type="submit" value='Submit' />
-    </form>
+        <br>
+        <h5>Password:</h5>
+        <input type="password" name="password" />
+        <br>
+        <br>
+        <h5>Verify:</h5>
+        <input type="password" name="verify" />
+    </label>
+    <br>
+    <br>
+    <input type="submit" value='Submit' />
+</form>
 
 {% endblock %}

@@ -1,31 +1,58 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
     <head>
         <title>{{pagetitle}}</title>
-        <style>
-            .error {
-                color: red;
-            }
-        </style>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+        <!-- Stylesheet to be used across site saved in static folder-->
+        <link rel="stylesheet" href="../static/style.css">
     </head>
 <body>
-    <nav>
-        <h1>Blogz</h1>
-        <button><a href="{{ url_for('index') }}">Home</a></button> |
-        <button><a href="{{ url_for('newpost') }}">New Post</a></button>
-        <button><a href="{{ url_for('logout') }}">Logout</a></button>
-    </nav>
 
-    {% with messages = get_flashed_messages(with_categories=True) %}
-        <ul>
-            {% for category, message in messages %}
-            <li class="{{ category }}"> {{ message }} </li>
-            {% endfor %}
-        </ul>
-    {% endwith %}
-    
-    {% block content %}
-    {% endblock %}
+    <div class="container-fluid">
+        <div class="row content">
+            <div class="col-sm-3 sidenav">
+                <h3>Blogz</h3>
+                <ul class="nav nav-pills nav-stacked">
+                    <li><a href="/blog">Home</a></li>
+                    <li><a href="/signup">Sign Up</a></li>
+                    <li><a href="/login">Log In</a></li>
+                    <li><a href="/newpost">New Post</a></li>
+                    <li><a href="/logout">Log Out</a></li>
+                </ul>
+                <br>
+            </div>
+            
+            <div class="col-sm-9">
+                <h4><small>{{ pageLabel }}</small></h4>
+                <hr>
+                {% with messages = get_flashed_messages(with_categories=True) %}
+                <ul>
+                {% for category, message in messages %}
+                <li class="{{ category }}"> {{ message }} </li>
+                {% endfor %}
+                </ul>
+                {% endwith %}
+
+                                        
+                {% block content %}
+                {% endblock %}
+                
+            </div>
+        </div>
+    </div>
+            
 
 </body>
+
+            
+<footer class="container-fluid">
+        <p>Made by Naty</p>
+        </footer>
+
+
 </html>
