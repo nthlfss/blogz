@@ -104,20 +104,16 @@ def newpost():
         post_body = request.form['body']
         user = User.query.filter_by(username=session['username']).first()
         # verify if fields are empty
-        if len(post_title) == 0:
-            titleError = "Field cannot be empty"
-        if len(post_body) == 0:
-            bodyError = "Field cannot be empty"
-        # if no errors, add input to db
-        if not titleError and not bodyError:
+        if len(post_title) != 0 or len(post_body) != 0:
             new_post = Blog(title=post_title, body=post_body, owner=user)
             db.session.add(new_post)
             db.session.commit()
-            return redirect(url_for('index'))
+            return redirect('/blog')
         # else reload same page with error messages
         else:
-            return render_template('newpost.html', pagetitle="Add A New Blog Entry", titleError=titleError, bodyError=bodyError, body=post_body, title=post_title)
-    return render_template('newpost.html', pagetitle="Add A New Blog Entry")
+            flash('All fields required', 'alert alert-danger')
+    
+    return render_template('newpost.html', pagetitle="Add A New Blog Entry", pageLabel="NEW POST")
     
 @app.route('/post/<int:id>')
 def post(id):
