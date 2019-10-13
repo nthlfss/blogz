@@ -35,11 +35,9 @@
                 <h4><small>{{ pageLabel }}</small></h4>
                 <hr>
                 {% with messages = get_flashed_messages(with_categories=True) %}
-                <ul>
                 {% for category, message in messages %}
-                <li class="{{ category }}"> {{ message }} </li>
+                <div class="alert alert-{{ category }}"> {{ message }} </div>
                 {% endfor %}
-                </ul>
                 {% endwith %}
 
                                         
@@ -49,14 +47,13 @@
             </div>
         </div>
     </div>
-            
-
-</body>
-
-            
-<footer class="container-fluid">
+      
+    
+    <footer class="container-fluid">
         <p>Made by Naty</p>
         </footer>
 
+
+</body>
 
 </html>

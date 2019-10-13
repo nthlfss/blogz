@@ -17,7 +17,7 @@ class Blog(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), nullable=False)
-    body = db.Column(db.String(500))
+    body = db.Column(db.String(500), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
@@ -29,7 +29,7 @@ class Blog(db.Model):
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), unique=True, nullable=False)
-    pwhash = db.Column(db.String(120))
+    pwhash = db.Column(db.String(120), nullable=False)
     blogs = db.relationship('Blog', backref='owner')
 
     def __init__(self, username, password):
@@ -52,10 +52,10 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and check_pw_hash(password, user.pwhash):
             session['username'] = username
-            flash('Logged in')
+            flash('Logged in', 'success')
             return redirect('/')
         else:
-            flash('User password incorrect, or user does not exist', 'error')
+            flash('User password incorrect, or user does not exist', 'danger')
 
     return render_template('login.html', pagetitle="Log In", pageLabel="LOG IN")
 
@@ -72,22 +72,23 @@ def signup():
             new_user = User(username, password)
             db.session.add(new_user)
             db.session.commit()
-            flash('New user registered')
+            flash('New user registered', 'success')
             return redirect('/login')
         else:
-            flash('User password incorrect, or user does not exist', 'error')
+            flash('User password incorrect, or user does not exist', 'danger')
     return render_template('signup.html', pagetitle="Sign Up", pageLabel="SIGN UP")
 
 @app.route('/logout')
 def logout():
     del session['username']
+    flash('User has been logged out', 'warning')
     return redirect('/')
 
 @app.route('/')
 @app.route('/blog')
-def index():
+def allblog():
     user = User.query.filter_by(username=session['username']).first()
-    entries = Blog.query.filter_by(owner=user).all()
+    entries = Blog.query.filter_by(owner=user).order_by(Blog.date_posted.desc())
     return render_template('blog.html', pagetitle="Blogz", entries=entries, user=user, pageLabel="RECENT POSTS")
 
 
@@ -111,14 +112,14 @@ def newpost():
             return redirect('/blog')
         # else reload same page with error messages
         else:
-            flash('All fields required', 'alert alert-danger')
+            flash('All fields required', 'danger')
     
     return render_template('newpost.html', pagetitle="Add A New Blog Entry", pageLabel="NEW POST")
     
 @app.route('/post/<int:id>')
 def post(id):
     entry = Blog.query.get(id)
-    return render_template('post.html', entry=entry, pagetitle=entry.title)
+    return render_template('post.html', entry=entry, pagetitle=entry.title, pageLabel=entry.title)
 
 
 if __name__ == '__main__':

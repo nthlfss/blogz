@@ -1,20 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
+<p>Already have an account? <a href='/login'>Log In</a></p>
 <form method='post'>
     <label>
         <h5>Username:</h5>
         <input type="text" name="username" />
-        <br>
-        <br>
         <h5>Password:</h5>
         <input type="password" name="password" />
-        <br>
-        <br>
         <h5>Verify:</h5>
         <input type="password" name="verify" />
     </label>
-    <br>
     <br>
     <input type="submit" value='Submit' />
 </form>
