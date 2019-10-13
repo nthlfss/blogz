@@ -4,7 +4,7 @@
 
                 {% for entry in entries %}
                 <a href="{{ url_for('post', id=entry.id) }}"><h2>{{entry.title}}</h2></a>
-                <h5><small><span class="glyphicon glyphicon-time"></span> Post by <strong>{{user.username}}</strong>, {{ entry.date_posted }}</small></h5>
+                <h5><small><span class="glyphicon glyphicon-time"></span> Post by <strong>{{entry.title}}</strong>, {{ entry.date_posted }}</small></h5>
                 <span>{{entry.body}}</span>
                 <hr />
                 {% endfor %}

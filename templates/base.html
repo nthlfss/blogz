@@ -33,7 +33,7 @@
             </div>
             
             <div class="col-sm-9">
-                <h4><small>{{ pageLabel }}</small></h4>
+                <h4><small>{{ pageLabel }} {{ userLabel }}</small></h4>
                 <hr>
                 {% with messages = get_flashed_messages(with_categories=True) %}
                 {% for category, message in messages %}

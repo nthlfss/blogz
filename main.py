@@ -40,7 +40,7 @@ class User(db.Model):
 @app.before_request
 def require_login():
     # routes allowed to be viewed without login
-    allowed_routes = ['login', 'signup', 'users']
+    allowed_routes = ['login', 'signup', 'allblog']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
@@ -87,9 +87,8 @@ def logout():
 @app.route('/')
 @app.route('/blog')
 def allblog():
-    user = User.query.filter_by(username=session['username']).first()
-    entries = Blog.query.filter_by(owner=user).order_by(Blog.date_posted.desc())
-    return render_template('blog.html', pagetitle="Blogz", entries=entries, user=user, pageLabel="RECENT POSTS")
+    entries = Blog.query.order_by(Blog.date_posted.desc()).all()
+    return render_template('blog.html', pagetitle="Blogz", entries=entries, pageLabel="RECENT POSTS")
 
 
 @app.route('/newpost', methods=['GET', 'POST'])
@@ -104,7 +103,8 @@ def newpost():
             new_post = Blog(title=post_title, body=post_body, owner=user)
             db.session.add(new_post)
             db.session.commit()
-            return redirect('/blog')
+            post_id = Blog.query.filter_by(owner=user).first()
+            return redirect(url_for('post', id=post_id.id))
         # else reload same page with error messages
         else:
             flash('All fields required', 'danger')
@@ -120,7 +120,7 @@ def community():
 def ind_user(username):
     user = User.query.filter_by(username=username).first()
     entries = Blog.query.filter_by(owner=user).order_by(Blog.date_posted.desc())
-    return render_template('user.html', user=user, entries=entries, pageLabel="POSTS BY user.username")
+    return render_template('user.html', user=user, entries=entries, pageLabel="POSTS BY", userLabel=user.username)
     
 @app.route('/post/<int:id>')
 def post(id):
