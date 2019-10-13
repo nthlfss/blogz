@@ -40,7 +40,7 @@ class User(db.Model):
 @app.before_request
 def require_login():
     # routes allowed to be viewed without login
-    allowed_routes = ['login', 'signup']
+    allowed_routes = ['login', 'signup', 'users']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
@@ -94,11 +94,6 @@ def allblog():
 
 @app.route('/newpost', methods=['GET', 'POST'])
 def newpost():
-
-    # initialize error variables
-    titleError = ""
-    bodyError = ""
-
     if request.method == 'POST':
         # save user input into variables
         post_title = request.form['title']
@@ -115,6 +110,17 @@ def newpost():
             flash('All fields required', 'danger')
     
     return render_template('newpost.html', pagetitle="Add A New Blog Entry", pageLabel="NEW POST")
+
+@app.route('/community')
+def community():
+    users = User.query.all()
+    return render_template('community.html', users=users, pagetitle='Users', pageLabel='USERS')
+
+@app.route('/users/<string:username>')
+def ind_user(username):
+    user = User.query.filter_by(username=username).first()
+    entries = Blog.query.filter_by(owner=user).order_by(Blog.date_posted.desc())
+    return render_template('user.html', user=user, entries=entries, pageLabel="POSTS BY user.username")
     
 @app.route('/post/<int:id>')
 def post(id):
