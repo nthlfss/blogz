@@ -2,6 +2,7 @@
 
 {% block content %}
     <h2>{{entry.title}}</h2>
+    <h5><small><span class="glyphicon glyphicon-time"></span> Post by <a href="{{ url_for('ind_user', username=entry.owner.username) }}">{{entry.owner.username}}</a>, {{ entry.date_posted }}</small></h5>
     <span>{{entry.body}}</span>
 
 {% endblock %}

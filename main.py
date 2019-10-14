@@ -40,7 +40,7 @@ class User(db.Model):
 @app.before_request
 def require_login():
     # routes allowed to be viewed without login
-    allowed_routes = ['login', 'signup', 'allblog']
+    allowed_routes = ['login', 'signup', 'allblog', 'index']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
@@ -85,6 +85,10 @@ def logout():
     return redirect('/')
 
 @app.route('/')
+def index():
+    users = User.query.all()
+    return render_template('index.html', users=users, pagetitle='Users', pageLabel='USERS')
+
 @app.route('/blog')
 def allblog():
     entries = Blog.query.order_by(Blog.date_posted.desc()).all()
@@ -110,11 +114,6 @@ def newpost():
             flash('All fields required', 'danger')
     
     return render_template('newpost.html', pagetitle="Add A New Blog Entry", pageLabel="NEW POST")
-
-@app.route('/community')
-def community():
-    users = User.query.all()
-    return render_template('community.html', users=users, pagetitle='Users', pageLabel='USERS')
 
 @app.route('/users/<string:username>')
 def ind_user(username):
